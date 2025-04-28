@@ -1,14 +1,18 @@
-// Evilson Vieira<evilson11@gmail.com>
+// Evilson Vieira<evilson11@academico.ufs.br>
+// Compilação: gcc bib.s challenge1.c -o challenge1
+// Sintaxe: ./challenge1 input1.txt
+// Saída1: output1.txt
+// Saída2: output2.pbm (se o bloco final for descomentado)
+
 #include <stdio.h>
 #include <stdlib.h>
-
 
 typedef struct maze Maze;
 struct maze{
     unsigned char *m;
     Maze* prev;
     Maze* next;};
-    
+
 void set(unsigned char *pic, int j);
 char tst(unsigned char *pic, int j);
 void dta(unsigned int *data, int I, int J);
@@ -41,10 +45,10 @@ void reverse(Maze *M, int K, int If, int Jf, int J8){
         k--;
         M=M->prev;
              if((j<Jf) &&(tst(M->m+i,j+1))) {j++;  F[k]='L';}
-        else if((i<I8f)&&(tst(M->m+i+J8,j))){i+=J8;F[k]='U';}   
+        else if((i<I8f)&&(tst(M->m+i+J8,j))){i+=J8;F[k]='U';}
         else if((j>0)  &&(tst(M->m+i,j-1))) {j--;  F[k]='R';}
         else                                {i-=J8;F[k]='D';}}
-    FILE *file = fopen("output.txt","w");
+    FILE *file = fopen("output1.txt","w");
     for(i=0;i<K;i++) fprintf(file,"%c ",F[i]);
     fclose(file);
     printf("%d Moves\n",K);}
@@ -59,7 +63,7 @@ void main(int argc, char **argv){
     I=2; while ((S=fgetc(file))!='4') if(S=='\n') I++;
     fclose(file);
     printf("\nI=%d J=%d\n",I,J);
-    
+
     Jf=J-1, J8=(J+7)>>3, If=I-1, U8=I*J8;
     unsigned int data[3]={(If<<16)|I,(Jf<<16)|J,J8};
     //BAREMA                       0          4  8
@@ -93,11 +97,14 @@ void main(int argc, char **argv){
     }
 
     reverse(M,k,If,Jf,J8);
-    
+
+// Descomente este bloco para obter uma imagem
+// com todas as soluções ótimas mescladas
+/*
+    printf("Gerando imagem:\n");
     for(i=0;i<U8;i++) M->m[i]=pic[i]=0;
     set(M->m+U8-J8,Jf);
     set(pic+U8-J8,Jf);
-
     Maze *MM=M;
     while(k){
         trp(MM->prev->m,MM->m,data,pic);
@@ -105,18 +112,14 @@ void main(int argc, char **argv){
         k--;
         for(i=0;i<U8;i++) pic[i]|=MM->m[i];
         }
-
-        file = fopen("imagem.pbm", "w");
- 
+        file = fopen("output1.pbm", "w");
         fprintf(file, "P4\n");
         fprintf(file, "# Prof Evilson\n");
         fprintf(file, "%u %u\n", J, I);
-      
         for (i=0; i<U8; i++)
             fprintf(file, "%c",rev(pic[i]));
         fclose(file);
-
-
+*/
     while(M->prev!=NULL){
         free(M->m);
         M=M->prev;
